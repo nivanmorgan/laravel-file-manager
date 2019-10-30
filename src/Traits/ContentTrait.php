@@ -204,7 +204,7 @@ trait ContentTrait
      */
     protected function aclFilter($disk, $content)
     {
-        $acl = resolve(ACL::class);
+        $acl = app(ACL::class);
 
         $withAccess = array_map(function ($item) use ($acl, $disk) {
             // add acl access level
