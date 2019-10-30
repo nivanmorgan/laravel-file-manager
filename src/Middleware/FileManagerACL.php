@@ -22,7 +22,7 @@ class FileManagerACL
     public function handle($request, Closure $next)
     {
         // if ACL is OFF
-        if (!resolve(ConfigRepository::class)->getAcl()) {
+        if (!app(ConfigRepository::class)->getAcl()) {
             return $next($request);
         }
 
@@ -35,7 +35,7 @@ class FileManagerACL
         }
 
         // get ACL service
-        $acl = resolve(ACL::class);
+        $acl = app(ACL::class);
 
         // switch by route name
         switch ($request->route()->getName()) {
