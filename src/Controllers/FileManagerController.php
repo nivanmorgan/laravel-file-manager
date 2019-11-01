@@ -35,7 +35,7 @@ class FileManagerController extends Controller
     public function __construct(FileManager $fm)
     {
         $this->middleware(function ($request, $next) {
-            config(['filesystems.disks.s3_company.root' => auth()->user()->company->formatted_name]);
+            config(['filesystems.disks.swell.root' => auth()->user()->company->formatted_name]);
             return $next($request);
         });
         $this->fm = $fm;
