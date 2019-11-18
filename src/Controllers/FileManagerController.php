@@ -39,10 +39,12 @@ class FileManagerController extends Controller
     {
         $this->middleware(function ($request, $next) {
 
+            dd($request->path());
+
             $root = auth()->user()->company->formatted_name;
 
-
             if($request->path('file-manager')) {
+
 
                 config(['filesystems.disks.swell.root' => $root ]);
 
