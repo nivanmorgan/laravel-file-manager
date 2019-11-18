@@ -41,11 +41,12 @@ class FileManagerController extends Controller
 
             $root = auth()->user()->company->formatted_name;
 
-            if($request->is('file-manager')) {
+
+            if($request->path('file-manager')) {
 
                 config(['filesystems.disks.swell.root' => $root ]);
 
-            } elseif ($request->is('clients/*')) {
+            } elseif ($request->path('clients/*')) {
 
 
                 $bucket = 'designloud';
