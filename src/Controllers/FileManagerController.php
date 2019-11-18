@@ -2,6 +2,7 @@
 
 namespace Alexusmai\LaravelFileManager\Controllers;
 
+use App\Client;
 use Alexusmai\LaravelFileManager\Events\Deleting;
 use Alexusmai\LaravelFileManager\Events\DirectoryCreated;
 use Alexusmai\LaravelFileManager\Events\DirectoryCreating;
@@ -17,6 +18,8 @@ use Alexusmai\LaravelFileManager\Events\Rename;
 use Alexusmai\LaravelFileManager\Requests\RequestValidator;
 use Alexusmai\LaravelFileManager\FileManager;
 use Alexusmai\LaravelFileManager\Services\Zip;
+use Aws\S3\Exception\S3Exception;
+use Aws\S3\S3Client;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 
@@ -35,7 +38,57 @@ class FileManagerController extends Controller
     public function __construct(FileManager $fm)
     {
         $this->middleware(function ($request, $next) {
-            config(['filesystems.disks.swell.root' => auth()->user()->company->formatted_name]);
+
+            $root = auth()->user()->company->formatted_name;
+
+            if($request->is('file-manager')) {
+
+                config(['filesystems.disks.swell.root' => $root ]);
+
+            } elseif ($request->is('clients/*')) {
+
+
+                $bucket = 'designloud';
+
+                $s3 = new S3Client([
+                    'version' => 'latest',
+                    'region'  => 'us-east-1'
+                ]);
+
+                $client = Client::find(hashid_decode($request->route('id'))) ;
+
+                $client_folder = $client->company_name;
+
+                try {
+                    // Get the object.
+                    $result = $s3->getObject([
+                        'Bucket' => $bucket,
+                        'Key'    => $root.'/'.$client_folder
+                    ]);
+
+                    if($result)
+                    config(['filesystems.disks.swell.root' => $root ]);
+
+                } catch (S3Exception $e) {
+
+                    echo $e->getMessage() . PHP_EOL;
+                }
+
+                try {
+                    // Get the object.
+                    $result = $s3->getObject([
+                        'Bucket' => $bucket,
+                        'Key'    => $root.'/'.formattedUrl($client_folder)
+                    ]);
+                    if($result)
+                        config(['filesystems.disks.swell.root' => $root ]);
+
+                } catch (S3Exception $e) {
+                    echo $e->getMessage() . PHP_EOL;
+                }
+
+            }
+
             return $next($request);
         });
         $this->fm = $fm;
