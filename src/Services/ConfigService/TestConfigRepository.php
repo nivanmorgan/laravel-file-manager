@@ -69,6 +69,8 @@ class TestConfigRepository implements ConfigRepository
     {
         if (session('myRoute') === 'clients') {
             return session('leftPath');
+        } else {
+            return config('file-manager.leftPath');
         }
     }
 
