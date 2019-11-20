@@ -2,7 +2,6 @@
 
 namespace Alexusmai\LaravelFileManager\Controllers;
 
-use App\Client;
 use Alexusmai\LaravelFileManager\Events\Deleting;
 use Alexusmai\LaravelFileManager\Events\DirectoryCreated;
 use Alexusmai\LaravelFileManager\Events\DirectoryCreating;
@@ -18,8 +17,6 @@ use Alexusmai\LaravelFileManager\Events\Rename;
 use Alexusmai\LaravelFileManager\Requests\RequestValidator;
 use Alexusmai\LaravelFileManager\FileManager;
 use Alexusmai\LaravelFileManager\Services\Zip;
-use Aws\S3\Exception\S3Exception;
-use Aws\S3\S3Client;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 
