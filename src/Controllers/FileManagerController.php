@@ -32,10 +32,12 @@ class FileManagerController extends Controller
      *
      * @param FileManager $fm
      */
+
     public function __construct(FileManager $fm)
     {
         $this->middleware(function ($request, $next) {
             config(['filesystems.disks.swell.root' => auth()->user()->company->formatted_name]);
+            config(['filesystems.disks.clients.root' => auth()->user()->company->formatted_name]);
             return $next($request);
         });
         $this->fm = $fm;
