@@ -35,63 +35,12 @@ class FileManagerController extends Controller
      *
      * @param FileManager $fm
      */
+
     public function __construct(FileManager $fm)
     {
         $this->middleware(function ($request, $next) {
-
-            dd($request->path());
-
-            $root = auth()->user()->company->formatted_name;
-
-            if($request->path('file-manager')) {
-
-
-                config(['filesystems.disks.swell.root' => $root ]);
-
-            } elseif ($request->path('clients/*')) {
-
-
-                $bucket = 'designloud';
-
-                $s3 = new S3Client([
-                    'version' => 'latest',
-                    'region'  => 'us-east-1'
-                ]);
-
-                $client = Client::find(hashid_decode($request->route('id'))) ;
-
-                $client_folder = $client->company_name;
-
-                try {
-                    // Get the object.
-                    $result = $s3->getObject([
-                        'Bucket' => $bucket,
-                        'Key'    => $root.'/'.$client_folder
-                    ]);
-
-                    if($result)
-                    config(['filesystems.disks.swell.root' => $root ]);
-
-                } catch (S3Exception $e) {
-
-                    echo $e->getMessage() . PHP_EOL;
-                }
-
-                try {
-                    // Get the object.
-                    $result = $s3->getObject([
-                        'Bucket' => $bucket,
-                        'Key'    => $root.'/'.formattedUrl($client_folder)
-                    ]);
-                    if($result)
-                        config(['filesystems.disks.swell.root' => $root ]);
-
-                } catch (S3Exception $e) {
-                    echo $e->getMessage() . PHP_EOL;
-                }
-
-            }
-
+            config(['filesystems.disks.swell.root' => auth()->user()->company->formatted_name]);
+            config(['filesystems.disks.clients.root' => auth()->user()->company->formatted_name]);
             return $next($request);
         });
         $this->fm = $fm;
